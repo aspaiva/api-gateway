@@ -1,29 +1,36 @@
 const jwt = require('jsonwebtoken');
+const repo = require('../repository/repository');
+const bcrypt = require('bcryptjs');
 
-function Login(req, res) {
+async function Login(req, res) {
   const { username, password } = req.body;
   let token
+  let user;
 
-  if (username === 'admin' && password === 'password') {
-    token = jwt.sign(
-      { username: username, role: 'admin' },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '1h',
-        algorithm: 'HS256'
-      }
-    );
-  } else if (username !== 'admin' && password === 'password') {
-    token = jwt.sign(
-      { username: username, role: 'user' },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '20m',
-        algorithm: 'HS256'
-      }
-    );
-  } else
+  try {
+    user = await repo.getUserByUsername(username);
+  } catch (error) {
     return res.status(401).json({ message: 'Invalid credentials' });
+  }
+  console.log('user', user);
+
+  if (!user) {
+    return res.status(401).json({ message: 'Invalid credentials' });
+  }
+
+  const passwordIsValid = bcrypt.compareSync(password, user.password);
+  if (!passwordIsValid) {
+    return res.status(401).json({ message: 'Invalid credentials' });
+  }
+
+  token = jwt.sign(
+    { username: username, role: user.role },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: '1h',
+      algorithm: 'HS256'
+    }
+  );
 
   res.json({ token });
 }

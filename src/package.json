@@ -7,18 +7,23 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "node -r dotenv/config index.js",
-    "dev": "npx nodemon -r dotenv/config index.js",
+    "start": "node -r dotenv/config ./server/index.js",
+    "dev": "npx nodemon -r dotenv/config ./server/index.js",
     "test": "jest"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
-    "dotenv-safe": "^9.1.0",
     "express": "^5.1.0",
     "express-http-proxy": "^2.1.2",
     "helmet": "^8.1.0",
     "http": "^0.0.1-security",
+    "jest": "^30.2.0",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.20.0",
     "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "dotenv-safe": "^9.1.0"
   }
 }

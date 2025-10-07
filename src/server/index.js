@@ -1,10 +1,10 @@
-console.log('Starting index.js');
+console.log('Starting index.js - api gateway');
 const http = require('http');
 const express = require('express');
 const httpProxy = require('express-http-proxy');
 const morgan = require('morgan');
 const helmet = require('helmet');
-const authController = require('./authController');
+const authController = require('../controllers/authController');
 
 const app = express();
 
