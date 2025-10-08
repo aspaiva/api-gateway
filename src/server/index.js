@@ -14,6 +14,7 @@ app.use(express.json());
 // app.use(cookieParser());
 
 app.post('/login', authController.Login);
+app.use(authController.validateToken); // Aplica o middleware de validação de token a todas as rotas abaixo
 app.post('/logout', authController.validateToken, authController.Logout);
 
 const options = {

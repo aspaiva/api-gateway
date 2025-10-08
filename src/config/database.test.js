@@ -2,8 +2,10 @@ const { test, expect } = require('@jest/globals');
 const db = require('./database');
 
 test('Database connection', async () => {
-    const client = await db.connect();
-    expect(client).toBeDefined();
+    const database = await db.connect();
+    console.log('Connected to database:', database.databaseName);
+    expect(database.databaseName).toBe(process.env.DB_NAME);
+    expect(database).toBeDefined();
     await db.closeConnection();
 });
 

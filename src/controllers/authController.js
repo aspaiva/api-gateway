@@ -36,13 +36,18 @@ async function Login(req, res) {
 }
 
 // Middleware to validate token antes das ações que precisam de autenticação (logout, etc)
-function validateToken(req, res, next) {
+async function validateToken(req, res, next) {
   try {
     let token = req.headers['authorization'];
     token = token.replace('Bearer ', ''); // Remove 'Bearer ' prefix if present
 
     if (!token) {
       return res.status(401).json({ message: 'No token provided' });
+    }
+
+    const isBlacklisted = await repo.isBlacklisted(token);
+    if (isBlacklisted) {
+      return res.status(401).json({ message: 'Token is blacklisted' });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -61,7 +66,9 @@ function Logout(req, res) {
   const user = res.locals.user; // Access user info from res.locals
   console.log(`User ${user.username} logged out`);
   // In a real application, you might want to handle token blacklisting or session invalidation here
+  repo.addBlacklist(req.headers['authorization'].replace('Bearer ', ''));
   res.json({ message: `User ${user.username} logged out successfully` });
+  res.sendStatus(200);
 }
 
 module.exports = { Login, Logout, validateToken };

@@ -4,7 +4,10 @@ let client;
 
 async function connect() {
     if (!client || !client.topology || client.topology.isClosed) {
-        client = new db.MongoClient(process.env.DB_URL, { useUnifiedTopology: true });
+        client = new db.MongoClient(
+            process.env.DB_URL,
+            { useUnifiedTopology: true }
+        );
         await client.connect();
     }
     return client.db(process.env.DB_NAME);
@@ -22,4 +25,8 @@ async function closeConnection() {
     return client;
 }
 
-module.exports = { connect, closeConnection };
+function getRandomToken() {
+    return new db.ObjectId().toString();
+}
+
+module.exports = { connect, closeConnection, getRandomToken };
